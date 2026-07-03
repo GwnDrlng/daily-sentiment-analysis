@@ -1,5 +1,13 @@
 # Daily Sentiment Analysis
 
+## About
+
+Strategic intelligence is not an information problem anymore. The information is free, abundant, and largely worthless in its raw form. The scarce thing is the person who can look at a week of product and AI chatter and tell you which two developments actually change how a team should operate. Organizations that cannot do that internally end up buying the conclusions secondhand, months late, from whoever synthesized first.
+
+Daily Sentiment Analysis is my attempt to build that synthesis as a repeatable practice rather than a talent you either have or lack. It is an agent, defined by a single instruction file, that reads across the places where product and AI conversations actually happen and returns a short daily briefing a busy operator can absorb before a first meeting.
+
+I built it because I wanted the discipline for myself before I wanted the tool. Reading widely and concluding narrowly is the core skill of product judgment, and codifying how the agent decides what matters forced me to make my own filter explicit. The briefing is the output. The methodology in `CLAUDE.md` is the actual product.
+
 Most people who want to stay current on product and AI read more. They subscribe to another newsletter, follow another thread, save another link they will never reopen. The result is not insight. It is volume. A product leader who consumes everything and synthesizes nothing has traded judgment for exposure, and the market rewards judgment.
 
 This project inverts that. It is a daily strategic intelligence agent that scans the noise so a human does not have to, and returns a five-minute executive briefing built around signal rather than coverage.
