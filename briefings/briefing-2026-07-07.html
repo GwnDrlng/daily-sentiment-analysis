@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Engineering Intelligence — Monday, July 7, 2026</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #222536; --border: #2e3148;
+    --accent: #6c63ff; --accent2: #00c2a8; --accent3: #f59e0b; --accent4: #ef4444;
+    --text: #e8eaf0; --text-muted: #8b8fa8; --text-dim: #5a5d75;
+    --green: #22c55e; --yellow: #eab308; --red: #ef4444; --orange: #f97316; --blue: #3b82f6; --purple: #a855f7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.7; max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+  a { color: var(--accent2); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.15s; }
+  a:hover { border-bottom-color: var(--accent2); }
+  .header { border-bottom: 1px solid var(--border); padding-bottom: 28px; margin-bottom: 36px; }
+  .header-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 10px; }
+  .header h1 { font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; margin-bottom: 6px; }
+  .header-meta { color: var(--text-muted); font-size: 13px; }
+  .section-title { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin: 44px 0 18px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .exec-summary { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 24px 26px; margin-bottom: 8px; }
+  .exec-summary h2 { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: var(--text); }
+  .signal-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+  .signal-num { background: var(--accent); color: white; font-size: 11px; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .signal-text { color: var(--text); line-height: 1.6; }
+  .sentiment-bar-container { margin-top: 18px; }
+  .sentiment-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+  .sentiment-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .sentiment-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #ef4444 0%, #eab308 40%, #22c55e 75%); width: 64%; }
+  .sentiment-caption { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+  .trend-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 22px 24px; margin-bottom: 18px; }
+  .trend-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .badge { display: inline-flex; align-items: center; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
+  .badge-label { color: var(--text-muted); font-weight: 400; margin-right: 4px; font-size: 9px; }
+  .m-explosive { background: rgba(239,68,68,0.18); color: #f87171; }
+  .m-high { background: rgba(245,158,11,0.18); color: #fbbf24; }
+  .m-medium { background: rgba(59,130,246,0.18); color: #60a5fa; }
+  .m-low { background: rgba(139,143,168,0.18); color: #b6bad0; }
+  .s-positive { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .s-mixed { background: rgba(234,179,8,0.15); color: #fde047; }
+  .s-polarizing { background: rgba(168,85,247,0.15); color: #c084fc; }
+  .s-negative { background: rgba(239,68,68,0.15); color: #f87171; }
+  .er-high { background: rgba(34,197,94,0.12); color: #4ade80; }
+  .er-medium { background: rgba(59,130,246,0.12); color: #60a5fa; }
+  .er-low { background: rgba(139,143,168,0.12); color: #b6bad0; }
+  .hr-high { background: rgba(239,68,68,0.12); color: #f87171; }
+  .hr-medium { background: rgba(245,158,11,0.12); color: #fbbf24; }
+  .hr-low { background: rgba(34,197,94,0.12); color: #4ade80; }
+  .cl-high { background: rgba(34,197,94,0.12); color: #4ade80; }
+  .cl-medium { background: rgba(59,130,246,0.12); color: #60a5fa; }
+  .cl-low { background: rgba(245,158,11,0.12); color: #fbbf24; }
+  .trend-body p { margin-bottom: 10px; }
+  .trend-body strong { font-weight: 600; }
+  .field-label { color: var(--text-muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 14px; margin-bottom: 4px; display: block; }
+  .contrarian-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid #a855f7; border-radius: 8px; padding: 18px 22px; margin-bottom: 16px; }
+  .contrarian-card h3 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+  .declining-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid #f97316; border-radius: 8px; padding: 18px 22px; margin-bottom: 16px; }
+  .declining-card h3 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+  .watchlist-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 12px; }
+  .watchlist-name { font-size: 14px; font-weight: 700; color: var(--accent2); margin-bottom: 6px; }
+  .implication-block { border-left: 2px solid var(--accent3); padding: 10px 0 10px 16px; margin-bottom: 12px; }
+  .implication-type { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent3); font-weight: 700; margin-bottom: 4px; }
+  .long-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
+  .long-icon { font-size: 13px; margin-top: 2px; width: 24px; flex-shrink: 0; color: var(--accent2); font-weight: 700; }
+  .sources-section { margin-top: 52px; border-top: 1px solid var(--border); padding-top: 24px; }
+  .sources-section h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); font-weight: 700; margin-bottom: 14px; }
+  .sources-list { list-style: none; }
+  .sources-list li { font-size: 12px; color: var(--text-muted); margin-bottom: 7px; display: flex; gap: 8px; }
+  .sources-list li .src-num { color: var(--text-dim); flex-shrink: 0; width: 24px; }
+  .sources-list li a { font-size: 12px; color: var(--text-muted); }
+  .sources-list li a:hover { color: var(--accent2); }
+  .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-dim); text-align: center; }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-label">Daily Intelligence Briefing</div>
+  <h1>AI Engineering Intelligence</h1>
+  <div class="header-meta">Monday, July 7, 2026 &middot; 5-minute read &middot; Signal over noise</div>
+</header>
+
+<div class="section-title">Executive Summary</div>
+<div class="exec-summary">
+  <h2>Top 5 Highest-Signal Developments</h2>
+  <div class="signal-row"><div class="signal-num">1</div><div class="signal-text"><strong><a href="https://diginomica.com/enterprise-hits-and-misses-harness-engineering-takes-over-enterprise-ai-and-tokenomics-full-swing">Harness engineering becomes the phrase du jour</a>.</strong> Google's own playbook reportedly attributes ~90% of an agentic system's value to context/harness engineering and only ~10% to the model — a frame that reframes the entire model-selection debate as a harness-design problem.</div></div>
+  <div class="signal-row"><div class="signal-num">2</div><div class="signal-text"><strong><a href="https://letsdatascience.com/news/anthropic-launches-claude-sonnet-5-for-agentic-workflows-5e7b91b6">Claude Sonnet 5 ships</a>.</strong> Near-Opus-tier agentic and coding performance at Sonnet-class price ($2/$10 per M tokens intro), now the default in Copilot and on Bedrock — plus a self-hosted Claude Code gateway for bring-your-own-cloud enterprises.</div></div>
+  <div class="signal-row"><div class="signal-num">3</div><div class="signal-text"><strong><a href="https://www.reuters.com/world/china/a-new-inexpensive-chinese-ai-model-is-catching-up-with-anthropic-openai-their-2026-07-02/">GLM-5.2 is the open-weight "mini DeepSeek moment"</a>.</strong> Z.ai's Chinese-chip-trained model nearly matches Claude Opus 4.8 and GPT-5.5 on coding/agent tasks, climbs OpenRouter past Anthropic, and posts strong bug-finding results at $0.17/vuln — open weights now competitive at the frontier.</div></div>
+  <div class="signal-row"><div class="signal-num">4</div><div class="signal-text"><strong><a href="https://www.forbes.com/sites/janakirammsv/2026/07/05/agent-gateways-are-becoming-the-control-plane-for-enterprise-ai/">The agent gateway becomes a product category</a>.</strong> Nutanix, Arcade, and Manufact in one week each shipped governed hops between agents and their models/tools — the control plane for cost, auth, tool permissions, and audit that ungoverned agent pilots have been missing.</div></div>
+  <div class="signal-row"><div class="signal-num">5</div><div class="signal-text"><strong><a href="https://www.forbes.com/sites/janakirammsv/2026/07/03/10-key-takeaways-from-mit-technology-reviews-agent-confidence-report/">MIT/Microsoft agent-confidence report quantifies the trust gap</a>.</strong> Across 101 tasks, scoped/verifiable work (report gen 83.5, boilerplate code 82.5) earns trust; complex multi-step infra work (service mesh 37.5) does not — and business context, not model capability, is the dominant blocker.</div></div>
+  <div class="sentiment-bar-container">
+    <div class="sentiment-label">Practitioner Sentiment — Cautiously Positive</div>
+    <div class="sentiment-bar"><div class="sentiment-fill" style="width:63%"></div></div>
+    <div class="sentiment-caption">Model and harness capability is clearly accelerating, but tokenomics, agent governance, and security-debt outpacing patching temper the enthusiasm; teams are shipping scoped agents while staying human-in-the-loop on infra.</div>
+  </div>
+</div>
+
+<div class="section-title">Model Watch</div>
+<div class="trend-card">
+  <div class="trend-title">1. Anthropic Claude Sonnet 5 + self-hosted Claude Code gateway</div>
+  <div class="badges">
+    <span class="badge m-high"><span class="badge-label">Momentum</span>High</span>
+    <span class="badge s-positive"><span class="badge-label">Sentiment</span>Positive</span>
+    <span class="badge er-high"><span class="badge-label">Production Ready</span>High</span>
+    <span class="badge hr-medium"><span class="badge-label">Hype Risk</span>Medium</span>
+    <span class="badge cl-high"><span class="badge-label">Confidence</span>High</span>
+  </div>
+  <div class="trend-body">
+    <span class="field-label">What is happening</span><p>Anthropic released Claude Sonnet 5 on June 30, 2026 as a Sonnet-class model with materially stronger agentic/tool-use/plan-execution and coding than prior Sonnets, narrowing the gap to Opus 4.8 at Sonnet price and latency. It is the new default on free/Pro tiers, GA in <a href="https://letsdatascience.com/news/anthropic-launches-claude-sonnet-5-for-agentic-workflows-5e7b91b6">GitHub Copilot</a>, and available on <a href="https://fourweekmba.com/ai-anthropic-claude-sonnet-5-bedrock-google-cloud/">Amazon Bedrock and Google Vertex AI</a>. Alongside it, Anthropic shipped a self-hosted Claude Code gateway that routes its coding agent through a customer's own cloud tenancy with SSO and audit logging.</p>
+    <span class="field-label">Capabilities &amp; benchmarks</span><p>Intro API pricing $2/M input, $10/M output through Aug 31, rising to $3/M input thereafter. A tokenizer change inflates token counts ~1.0–1.35x, so headline price comparisons require per-prompt normalization. Anthropic's system card notes improved agentic capability alongside reported weaknesses in cybersecurity tasks (RSP-evaluated).</p>
+    <span class="field-label">Who is using it</span><p>GitHub rolled Sonnet 5 across editors and the Copilot cloud agent; AWS published Bedrock integration guidance for agentic workloads. The self-hosted gateway targets regulated enterprises wanting code, credentials, and context inside their own perimeter.</p>
+    <span class="field-label">Engineering implication</span><p>For long-horizon agents that burn many tokens per task, a cheaper near-frontier model materially changes deployment economics. The gateway pattern is the more strategically important shift: it lets regulated teams run agentic coding without exfiltrating context. <strong>Verdict: Adopt</strong> Sonnet 5 as the new default workhorse; <strong>Trial</strong> the self-hosted gateway if you have Bedrock/Vertex and a security-perimeter requirement.</p>
+  </div>
+</div>
+
+<div class="trend-card">
+  <div class="trend-title">2. Z.ai GLM-5.2 — open-weight frontier model from Chinese chips</div>
+  <div class="badges">
+    <span class="badge m-explosive"><span class="badge-label">Momentum</span>Explosive</span>
+    <span class="badge s-positive"><span class="badge-label">Sentiment</span>Positive</span>
+    <span class="badge er-medium"><span class="badge-label">Production Ready</span>Medium</span>
+    <span class="badge hr-medium"><span class="badge-label">Hype Risk</span>Medium</span>
+    <span class="badge cl-high"><span class="badge-label">Confidence</span>High</span>
+  </div>
+  <div class="trend-body">
+    <span class="field-label">What is happening</span><p>Z.ai (formerly Zhipu AI) released GLM-5.2, an open-weight model trained entirely on Chinese chips. <a href="https://www.reuters.com/world/china/a-new-inexpensive-chinese-ai-model-is-catching-up-with-anthropic-openai-their-2026-07-02/">Reuters</a> reports it is "just a tick below Opus 4.8 and right up there with GPT-5.5" (per David Sacks), has climbed OpenRouter usage past Anthropic, and drawn praise from Snowflake's CEO and Marc Andreessen. Z.ai also launched <a href="https://venturebeat.com/technology/z-ai-launches-zcode-to-challenge-cursor-claude-code-and-github-copilot-in-ai-coding/">ZCode</a>, an agent-first dev environment tuned for GLM-5.2.</p>
+    <span class="field-label">Capabilities &amp; benchmarks</span><p>Strong coding and agent capabilities at a fraction of frontier-API cost. <a href="https://www.darkreading.com/cyber-risk/chinese-llms-broaden-gap-between-attackers-and-defenders">Sempgrep testing</a> found GLM-5.2 outperforms Anthropic Opus and OpenAI GPT-5.5 on some bug-finding benchmarks at ~$0.17 per vulnerability found. Open weights enable local deployment and data sovereignty — but also alignment-escape experimentation.</p>
+    <span class="field-label">Who is using it</span><p>Western developer interest via OpenRouter; ZCode targeting the Chinese dev market with WeChat/Feishu remote-steering of long-running coding agents. Adoption is fastest among cost-sensitive and sovereignty-constrained teams; Western enterprise uptake is gated by data-security concerns.</p>
+    <span class="field-label">Engineering implication</span><p>The open-weight frontier has demonstrably closed to within a tick of closed frontier models, with security-relevant capability at commodity pricing. Treat GLM-5.2 as a credible cost-arbitrage and self-host path for coding/agent work — and as a reason to red-team your own codebase, since attackers get the same capability locally. <strong>Verdict: Trial</strong> for cost-sensitive or air-gapped coding/agent workloads; watch data-governance and supply-chain posture before production.</p>
+  </div>
+</div>
+
+<div class="trend-card">
+  <div class="trend-title">3. Meta "Watermelon" &amp; OpenAI GPT-5.6 — frontier roadmap signal</div>
+  <div class="badges">
+    <span class="badge m-medium"><span class="badge-label">Momentum</span>Medium</span>
+    <span class="badge s-mixed"><span class="badge-label">Sentiment</span>Mixed</span>
+    <span class="badge er-low"><span class="badge-label">Production Ready</span>Low</span>
+    <span class="badge hr-high"><span class="badge-label">Hype Risk</span>High</span>
+    <span class="badge cl-medium"><span class="badge-label">Confidence</span>Medium</span>
+  </div>
+  <div class="trend-body">
+    <span class="field-label">What is happening</span><p>Per <a href="https://www.businessinsider.com/meta-ai-model-catches-up-openai-gpt-5-says-2026-7">Business Insider</a>, Meta superintelligence chief Alexandr Wang told an internal town hall that Meta's next model — codenamed Watermelon, after April's "Avocado" (Muse Spark) — has "caught up" with OpenAI's GPT-5.5 on benchmarks, using an order of magnitude more compute. OpenAI's most powerful model, GPT-5.6, debuted late June but remains in limited preview at the US government's request.</p>
+    <span class="field-label">Capabilities &amp; benchmarks</span><p>Wang cited closely-followed benchmarks but did not specify which; Meta declined comment. No independent benchmark confirmation yet. Watermelon is still in training.</p>
+    <span class="field-label">Who is using it</span><p>Neither model is generally available. Signal is vendor-internal and secondhand; treat as roadmap positioning, not shipping evidence.</p>
+    <span class="field-label">Engineering implication</span><p>Do not anchor architecture decisions to leaked roadmap claims. The durable signal is that Meta believes it has closed to parity — which would, if confirmed at release, intensify open-weight pressure on closed frontier pricing. <strong>Verdict: Watch</strong>; revisit when Watermelon ships and is independently benchmarked.</p>
+  </div>
+</div>
+
+<div class="section-title">Agent Engineering &amp; AI SDLC</div>
+<div class="trend-card">
+  <div class="trend-title">1. Harness engineering — the named practice rising on a 90/10 framing</div>
+  <div class="badges">
+    <span class="badge m-explosive"><span class="badge-label">Momentum</span>Explosive</span>
+    <span class="badge s-positive"><span class="badge-label">Sentiment</span>Positive</span>
+    <span class="badge er-medium"><span class="badge-label">Production Ready</span>Medium</span>
+    <span class="badge hr-medium"><span class="badge-label">Hype Risk</span>Medium</span>
+    <span class="badge cl-medium"><span class="badge-label">Confidence</span>Medium</span>
+  </div>
+  <div class="trend-body">
+    <span class="field-label">What is happening</span><p><a href="https://diginomica.com/enterprise-hits-and-misses-harness-engineering-takes-over-enterprise-ai-and-tokenomics-full-swing">Diginomica</a> names harness engineering the "phrase du jour," citing a Google playbook's claim that proper context/harness engineering accounts for ~90% of an agentic system's value while the model accounts for ~10%. The discussion explicitly frames harness engineering as either an evolution of, or superset to, context engineering — the boundary is still being contested.</p>
+    <span class="field-label">Why it matters</span><p>If the 90/10 split holds, model choice is a second-order decision and the harness — tools, memory, planning/verification loops, tool permissions, retrieval, execution sandbox — is where engineering leverage and ROI live. This reframes staffing, eval design, and vendor selection around the harness, not the model leaderboard.</p>
+    <span class="field-label">Evidence from real teams</span><p>The framing is being echoed by analyst and practitioner networks (diginomica's enterprise coverage) and is converging with the agent-gateway product wave and Skills SA's multi-agent workflow pattern. Independent empirical validation of the 90/10 ratio is thin so far; it is a heuristic gaining consensus, not a measured result.</p>
+    <span class="field-label">Engineering implication</span><p>Invest in harness quality — retrieval, tool design, verification loops, and the gateway/governance layer — as the primary lever. Treat the 90/10 number as a useful planning heuristic, not a law. <strong>Verdict: Adopt</strong> the harness-first mindset; <strong>Watch</strong> for a published methodology behind the 90/10 claim before quoting it internally as fact.</p>
+  </div>
+</div>
+
+<div class="trend-card">
+  <div class="trend-title">2. Agent gateways — the new control-plane product category</div>
+  <div class="badges">
+    <span class="badge m-high"><span class="badge-label">Momentum</span>High</span>
+    <span class="badge s-positive"><span class="badge-label">Sentiment</span>Positive</span>
+    <span class="badge er-medium"><span class="badge-label">Production Ready</span>Medium</span>
+    <span class="badge hr-low"><span class="badge-label">Hype Risk</span>Low</span>
+    <span class="badge cl-high"><span class="badge-label">Confidence</span>High</span>
+  </div>
+  <div class="trend-body">
+    <span class="field-label">What is happening</span><p>A new product category crystallized in a single week: <a href="https://www.forbes.com/sites/janakirammsv/2026/07/05/agent-gateways-are-becoming-the-control-plane-for-enterprise-ai/">Forbes reports</a> Nutanix shipped its GA Agent Gateway inside Enterprise AI 2.7 (late May), Arcade put its agent-authorization/tool-execution runtime on Azure and AWS marketplaces (July 3), and Manufact opened an MCP hosting cloud (July 2). Each inserts one governed hop between an agent and the models/tools it calls.</p>
+    <span class="field-label">Why it matters</span><p>As agents multiply across departments and spawn sub-agents, ungoverned direct access to production systems becomes an audit and cost liability. A gateway centralizes routing, auth, rate-limiting, model failover, tool-level filtering (so a customer-service agent cannot call Stripe), and logging — the missing control plane for agent traffic. It sits in front of MCP servers, the now-standard tool-discovery mechanism.</p>
+    <span class="field-label">Evidence from real teams</span><p>Nutanix (GA, multi-model routing including Azure OpenAI, Claude, self-hosted Llama with failover); Arcade (enterprise marketplace distribution); Manufact (git-push-to-production MCP hosting). <a href="https://techcrunch.com/2026/06/30/x-now-offers-an-mcp-server-to-make-its-platform-easier-for-ai-tools-to-use/">X, GitHub, Slack, Notion, and Stripe now ship official hosted MCP servers</a>, making the tool layer the standard integration surface.</p>
+    <span class="field-label">Engineering implication</span><p>For any multi-agent or cross-department agent rollout, plan a gateway as a first-class infra component from day one — not a retrofit. Evaluate on ownership model (self-host vs managed), enforcement point, and cost. <strong>Verdict: Trial</strong> a gateway as your agent footprint passes 2–3 production surfaces.</p>
+  </div>
+</div>
+
+<div class="trend-card">
+  <div class="trend-title">3. Multi-agent workflows as reusable patterns + pre-deployment skill auditing</div>
+  <div class="badges">
+    <span class="badge m-high"><span class="badge-label">Momentum</span>High</span>
+    <span class="badge s-positive"><span class="badge-label">Sentiment</span>Positive</span>
+    <span class="badge er-medium"><span class="badge-label">Production Ready</span>Medium</span>
+    <span class="badge hr-low"><span class="badge-label">Hype Risk</span>Low</span>
+    <span class="badge cl-high"><span class="badge-label">Confidence</span>High</span>
+  </div>
+  <div class="trend-body">
+    <span class="field-label">What is happening</span><p>Two real-team signals on agent SDLC this week. (1) <a href="https://www.itnews.com.au/news/skills-sa-to-treat-multi-agent-workflow-as-a-reusable-pattern-627077">Skills SA</a> detailed at Databricks Data + AI Summit a supervisor-agent-orchestrating-three-agents (operational, analysis, decision-support) workflow on Databricks for VET-provider compliance review — built ~18 months ago, now treated as a reusable pattern for other government processes, with explicit audit-trail and consistency benefits. (2) AIPOCH + Zhongshan Hospital published <a href="https://markets.businessinsider.com/news/stocks/aipoch-launches-medskillaudit-an-ai-audit-framework-to-evaluate-medical-ai-agent-skills-before-deployment-1036284741">MedSkillAudit</a>, a two-layer "veto gate" framework that statically + dynamically audits agent skills for fabricated citations, methodological fallacies, and unsafe outputs before deployment; 57.3% of 75 audited medical skills fell below the Limited Release threshold.</p>
+    <span class="field-label">Why it matters</span><p>These are concrete, shipped examples of two practices the field has been theorizing: orchestrator-with-worker multi-agent topology as a reusable enterprise pattern, and pre-deployment skill-level gating that treats each agent capability as a unit requiring its own release gate (not just a model eval).</p>
+    <span class="field-label">Evidence from real teams</span><p>Skills SA (state government, production, 18 months runtime); Fudan University Zhongshan Hospital pathology dept + AIPOCH (peer-reviewed preprint, validation against expert reviewers). Separately, OpenAI's "pre-deployment simulation" — replaying recorded real chats against an unreleased model and auditing responses — is being framed as a model-release practice.</p>
+    <span class="field-label">Engineering implication</span><p>Adopt the supervisor/worker topology for document-heavy compliance/review workloads, and add per-skill release gates (operational stability + scientific-integrity checks) wherever agents produce citable or decision-supporting output. <strong>Verdict: Adopt</strong> the orchestrator pattern; <strong>Trial</strong> veto-gate skill auditing for high-stakes domains.</p>
+  </div>
+</div>
+
+<div class="section-title">Terminology Tracker</div>
+<div class="watchlist-item"><div class="watchlist-name"><a href="https://diginomica.com/enterprise-hits-and-misses-harness-engineering-takes-over-enterprise-ai-and-tokenomics-full-swing">Harness engineering</a> — NEW</div><p><strong>Definition:</strong> The design of the full execution environment around a model — tools, memory, retrieval, planning/verification loops, tool permissions, execution sandbox, and governance — as the primary determinant of agentic system value. Distinct from (and arguably a superset of) <em>context engineering</em> (which focuses on what goes into the context window): harness engineering encompasses the runtime scaffolding and control plane, not just prompt construction. The boundary between the two is actively contested. Named "phrase du jour" by diginomica (July 6, 2026), anchored to a Google playbook claim that harness/context work is ~90% of agentic value vs ~10% for the model.</p></div>
+<div class="watchlist-item"><div class="watchlist-name"><a href="https://www.forbes.com/sites/janakirammsv/2026/07/05/agent-gateways-are-becoming-the-control-plane-for-enterprise-ai/">Agent gateway</a> — NEW</div><p><strong>Definition:</strong> A centralized control-plane product sitting between an AI agent and the models/tools it calls, providing routing, authentication, rate-limiting, model failover, tool-level permission filtering, cost management, and observability/audit logging. Differs from an API gateway by being agent-traffic aware (sub-agent spawning, MCP server fronting, tool-level rather than endpoint-level access control). Emerged as a named category in one week via Nutanix (GA), Arcade (marketplace), and Manufact (MCP hosting).</p></div>
+<div class="watchlist-item"><div class="watchlist-name"><a href="https://markets.businessinsider.com/news/stocks/aipoch-launches-medskillaudit-an-ai-audit-framework-to-evaluate-medical-ai-agent-skills-before-deployment-1036284741">Skill auditing (veto-gate)</a> — NEW</div><p><strong>Definition:</strong> Pre-deployment, per-skill quality gating for modular agent capabilities — distinct from whole-model evals. A two-layer "veto gate" reviews operational stability (determinism, security) and scientific/integrity dimensions (no fabricated citations, no causal fallacies, code usability) via static (40%) + dynamic/runtime (60%) scoring, classifying skills as Production Ready / Limited Release / Beta Only / Rejected. Coin-framed by AIPOCH with Zhongshan Hospital for medical research agents.</p></div>
+<div class="watchlist-item"><div class="watchlist-name"><a href="https://www.itnews.com.au/news/aws-to-create-division-of-embedded-ai-engineers-627057">Forward-deployed engineering</a> — NEW</div><p><strong>Definition:</strong> Embedding versatile engineers directly inside customer organizations for time-boxed stints (e.g., AWS's 45-day pods) to write production-grade code, navigate internal politics, and fast-track agentic-AI adoption. Originated at Palantir over a decade ago; now adopted by Anthropic, Google Cloud, Salesforce, and AWS ($1B committed). LinkedIn reports 42x growth in demand 2023–2025. Box CEO Aaron Levie calls it about to become "one of the most in-demand jobs in tech."</p></div>
+<div class="watchlist-item"><div class="watchlist-name"><a href="https://letsdatascience.com/news/zig-bans-ai-generated-contributions-raises-tradeoffs-64f5f2d5">AI-code contribution bans</a> — NEW</div><p><strong>Definition:</strong> Open-source project governance policies that prohibit LLM-generated or LLM-assisted contributions (code, edits, translations, brainstorming, even mentions). Zig adopted the strictest known version, calling AI-assisted PRs "invariably garbage" with "negative value"; Godot tightened restrictions. Driver: small reviewer teams (~200 open PRs at Zig) overwhelmed by low-quality "drive-by" AI submissions. A governance counter-pattern to mainstream AI-SDLC adoption.</p></div>
+
+<div class="section-title">Trend Deltas</div>
+<div class="long-row"><div class="long-icon">&#9733;</div><div><strong>Harness engineering</strong> — first seen today; entered tracking. The week's dominant emerging-practice term, anchored to a 90/10 model-vs-harness claim now circulating through enterprise-analyst networks.</div></div>
+<div class="long-row"><div class="long-icon">&#9733;</div><div><strong>Agent gateway</strong> — first seen today; entered tracking. A product category that did not exist a year ago, with three vendor shipments in one week.</div></div>
+<div class="long-row"><div class="long-icon">&#9733;</div><div><strong>Skill auditing (veto-gate)</strong> — first seen today; entered tracking. Pre-deployment per-skill gating as a complement to whole-model evals.</div></div>
+<div class="long-row"><div class="long-icon">&#9733;</div><div><strong>Forward-deployed engineering</strong> — first seen today; entered tracking. AWS's $1B division signals mainstreaming of the Palantir-style embedding model for AI delivery.</div></div>
+<div class="long-row"><div class="long-icon">&#9733;</div><div><strong>AI-code contribution bans</strong> — first seen today; entered tracking. A governance counter-trend to AI-SDLC adoption, now at Zig and Godot.</div></div>
+<div class="long-row"><div class="long-icon">&#9733;</div><div><strong>GLM-5.2 / ZCode</strong> — first seen today; entered tracking. Open-weight frontier parity from a Chinese-chip-trained model plus a purpose-built agentic IDE.</div></div>
+<div class="long-row"><div class="long-icon">&#9733;</div><div><strong>Claude Sonnet 5 + self-hosted Claude Code gateway</strong> — first seen today; entered tracking. New default workhorse model plus bring-your-own-cloud agent routing.</div></div>
+
+<div class="section-title">Strategic Implications</div>
+<div class="implication-block"><div class="implication-type">Adopt</div><p>Move harness design (tools, memory, retrieval, verification loops, the gateway/governance layer) ahead of model selection as your primary engineering lever — the 90/10 framing, even as a heuristic, correctly reallocates where ROI is found. Default new coding/agent work to Claude Sonnet 5 (now the workhorse price/perf point). Use the supervisor/worker multi-agent topology for document-heavy review/compliance workloads — Skills SA's 18-month production run is a credible template with audit-trail and consistency benefits.</p></div>
+<div class="implication-block"><div class="implication-type">Trial</div><p>An agent gateway as your agent footprint crosses 2–3 production surfaces (Nutanix for self-hosted multi-model, Arcade for marketplace authorization, Manufact for MCP hosting). GLM-5.2 for cost-sensitive or air-gapped coding/agent work — validate data-governance and supply-chain posture first. Per-skill veto-gate auditing for any agent that emits citable or decision-supporting output (the 57.3% medical-skill failure rate is a sobering baseline). The self-hosted Claude Code gateway if you have Bedrock/Vertex and a regulated-context requirement.</p></div>
+<div class="implication-block"><div class="implication-type">Watch</div><p>Meta Watermelon and OpenAI GPT-5.6 — roadmap claims, not shipping evidence; revisit when independently benchmarked. The 90/10 harness-vs-model ratio — adopt the mindset, but wait for a published methodology before institutionalizing the number. Mythos/Project Glasswing dynamics (AI vuln-discovery outpacing patching at a ~6% fix rate, per <a href="https://www.darkreading.com/vulnerabilities-threats/anthropic-s-ai-finds-bugs-ibm-bets-5b-it-can-fix-them-">Dark Reading</a>) — a security-debt accelerator that should reshape your patch-priority cadence regardless of which model you run.</p></div>
+<div class="implication-block"><div class="implication-type">30-90 Day Watchlist</div><p>Convergence of agent gateway + harness engineering into a unified "agent control plane" practice; whether open-weight frontier parity (GLM-5.2) holds under broader independent benchmarks and forces closed-model price cuts; MIT/Microsoft agent-confidence task-index adoption as a shared trust taxonomy for scoping which tasks to delegate; regulatory/sovereignty friction on Chinese open-weight models in Western enterprises; forward-deployed-engineering units becoming the default enterprise-AI delivery model.</p></div>
+
+<div class="sources-section"><h2>Sources</h2><ol class="sources-list">
+  <li><span class="src-num">[1]</span><a href="https://diginomica.com/enterprise-hits-and-misses-harness-engineering-takes-over-enterprise-ai-and-tokenomics-full-swing">Diginomica — "Harness engineering takes over enterprise AI"</a></li>
+  <li><span class="src-num">[2]</span><a href="https://letsdatascience.com/news/anthropic-launches-claude-sonnet-5-for-agentic-workflows-5e7b91b6">Let's Data Science — "Anthropic launches Claude Sonnet 5 for agentic workflows"</a></li>
+  <li><span class="src-num">[3]</span><a href="https://fourweekmba.com/ai-anthropic-claude-sonnet-5-bedrock-google-cloud/">FourWeekMBA — "Anthropic Ships Claude Sonnet 5 and a Self-Hosted Code Gateway"</a></li>
+  <li><span class="src-num">[4]</span><a href="https://www.reuters.com/world/china/a-new-inexpensive-chinese-ai-model-is-catching-up-with-anthropic-openai-their-2026-07-02/">Reuters — "A new, inexpensive Chinese AI model is catching up with Anthropic, OpenAI"</a></li>
+  <li><span class="src-num">[5]</span><a href="https://venturebeat.com/technology/z-ai-launches-zcode-to-challenge-cursor-claude-code-and-github-copilot-in-ai-coding">VentureBeat — "Z.ai launches ZCode to challenge Cursor, Claude Code and GitHub Copilot"</a></li>
+  <li><span class="src-num">[6]</span><a href="https://www.darkreading.com/cyber-risk/chinese-llms-broaden-gap-between-attackers-and-defenders">Dark Reading — "Chinese LLMs Broaden the Gap Between Attackers &amp; Defenders"</a></li>
+  <li><span class="src-num">[7]</span><a href="https://www.forbes.com/sites/janakirammsv/2026/07/05/agent-gateways-are-becoming-the-control-plane-for-enterprise-ai/">Forbes — "Agent Gateways Are Becoming The Control Plane For Enterprise AI"</a></li>
+  <li><span class="src-num">[8]</span><a href="https://www.forbes.com/sites/janakirammsv/2026/07/03/10-key-takeaways-from-mit-technology-reviews-agent-confidence-report/">Forbes — "10 Key Takeaways From MIT Technology Review's Agent Confidence Report"</a></li>
+  <li><span class="src-num">[9]</span><a href="https://www.businessinsider.com/meta-ai-model-catches-up-openai-gpt-5-says-2026-7">Business Insider — "Alexandr Wang says Meta's coming AI has caught up with OpenAI's flagship model"</a></li>
+  <li><span class="src-num">[10]</span><a href="https://gigazine.net/gsc_news/en/20260630-arena-revenue/">Gigazine / TechCrunch — "Arena surpasses $100M annualized revenue"</a></li>
+  <li><span class="src-num">[11]</span><a href="https://www.itnews.com.au/news/skills-sa-to-treat-multi-agent-workflow-as-a-reusable-pattern-627077">iTnews — "Skills SA to treat multi-agent workflow as a reusable pattern"</a></li>
+  <li><span class="src-num">[12]</span><a href="https://www.itnews.com.au/news/aws-to-create-division-of-embedded-ai-engineers-627057">iTnews — "AWS to create division of 'embedded' AI engineers"</a></li>
+  <li><span class="src-num">[13]</span><a href="https://markets.businessinsider.com/news/stocks/aipoch-launches-medskillaudit-an-ai-audit-framework-to-evaluate-medical-ai-agent-skills-before-deployment-1036284741">Markets Insider — "AIPOCH Launches MedSkillAudit"</a></li>
+  <li><span class="src-num">[14]</span><a href="https://www.darkreading.com/vulnerabilities-threats/anthropic-s-ai-finds-bugs-ibm-bets-5b-it-can-fix-them-">Dark Reading — "Anthropic's AI Finds Bugs. IBM Bets $5B It Can Fix Them."</a></li>
+  <li><span class="src-num">[15]</span><a href="https://letsdatascience.com/news/zig-bans-ai-generated-contributions-raises-tradeoffs-64f5f2d5">Let's Data Science — "Zig Bans AI-Generated Contributions, Raises Tradeoffs"</a></li>
+  <li><span class="src-num">[16]</span><a href="https://techcrunch.com/2026/06/30/x-now-offers-an-mcp-server-to-make-its-platform-easier-for-ai-tools-to-use/">TechCrunch — "X now offers an MCP server"</a></li>
+  <li><span class="src-num">[17]</span><a href="https://www.marktechpost.com/2026/07/04/qwens-former-lead-on-what-hybrid-thinking-got-wrong-and-why-he-now-backs-agents/">MarkTechPost — "Qwen's Former Lead on What Hybrid Thinking Got Wrong"</a></li>
+</ol></div>
+<div class="footer">PM &amp; AI Intelligence Briefing &nbsp;&middot;&nbsp; 2026-07-07 &nbsp;&middot;&nbsp; Automated daily run &nbsp;&middot;&nbsp; Signal over noise</div>
+</body>
+</html>
