@@ -1,0 +1,43 @@
+# Source filtering — enforced by guardrails.py and passed to the research tool.
+
+geo_priority:
+  - North America
+  - Silicon Valley / startup ecosystem
+  - APAC technology / product ecosystem
+
+# Domains to hard-block from citations (down-ranked noise per CLAUDE.md).
+blocked_domains:
+  - pinterest.com
+  - quora.com
+
+# Substrings that, if present in a briefing item's text, flag it as noise to drop.
+downrank_keywords:
+  - crypto
+  - nft
+  - "$BTC"
+  - token price
+  - airdrop
+  - motivational
+  - "top 10 tips"
+  - recruiting spam
+
+# Companies/ecosystems to monitor (bias the research toward these).
+watch_companies:
+  - OpenAI
+  - Anthropic
+  - Microsoft
+  - Atlassian
+  - Notion
+  - Linear
+  - Figma
+  - Productboard
+  - Amplitude
+  - Mixpanel
+  - ServiceNow
+  - Snowflake
+  - Datadog
+  - Cursor
+  - Replit
+  - Perplexity
+  - Vercel
+  - Stripe

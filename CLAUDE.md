@@ -22,13 +22,44 @@ no manual registration and no `vercel.json`.
   default-exports `defineTool`; discovered by filename.
 - `agent/schedules/daily-briefing.ts` — the daily cron (`0 10 * * *`) + the run prompt.
 - `agent/channels/eve.ts` — HTTP channel + auth (enables manual triggering of the deployed agent).
+- `agent/lib/research-log.ts` — per-run search log; drained into a replay case when a briefing is archived.
 - `briefings/` — committed briefing archives. **Do not gitignore.**
+- `rigor/` — the offline governance/eval/training layer (Python; see **Rigor layer** below).
+- `config/` — versioned rigor config: `rigor.yaml` (models, budgets, optimizer knobs),
+  `rubric.yaml` (judge dimensions + pass threshold), `sources.yaml` (blocked domains, noise keywords).
+- `evals/` — replay cases (committed by the deployed agent), score history, prompt version history.
+- `logs/runs.jsonl` — append-only audit trail (one manifest per rigor run, with prompt/config hashes).
 
 ## Commands
 
 - `npm run dev` — run locally (`eve dev`); trigger the agent from the REPL to test end-to-end.
 - `npm run build` / `npm start` — `eve build` / `eve start`.
 - `npm run typecheck` — `tsgo` (TypeScript native preview).
+- `.venv/bin/python -m pytest tests/ -q` — rigor-layer unit tests (offline, no API keys).
+- `.venv/bin/python -m rigor.eval [--last N] [--skip-verify]` — judge committed briefings.
+- `.venv/bin/python -m rigor.optimize [--apply]` — the prompt-training loop.
+
+## Rigor layer (governance, evals, prompt training)
+
+A Python sidecar that grades and trains the Eve agent from outside the deployed pipeline.
+Setup: `/opt/homebrew/bin/python3.13 -m venv .venv && .venv/bin/pip install -r requirements.txt`,
+then add `ANTHROPIC_API_KEY` to `.env.local` (judge + optimizer run on the Claude API;
+replay runs on the same GLM/Ollama model as production, so `OLLAMA_API_KEY` is also needed).
+
+- **Guardrails + judge** (`rigor/guardrails.py`, `rigor/judge.py`): `python -m rigor.eval` parses the
+  committed briefing HTML, enforces citations / link liveness / blocked domains / injection & PII,
+  then LLM-judges every rubric dimension. Pass/fail is computed in code from `config/rubric.yaml`.
+  Scores append to `evals/results/scores.jsonl`; each run is recorded in `logs/runs.jsonl`.
+- **Replay cases**: every deployed run commits `evals/cases/case-<date>.json` (that day's Tavily
+  searches, frozen) alongside the briefing — captured by `agent/lib/research-log.ts` +
+  `save_briefing_to_repo`. `git pull` brings cases down for training.
+- **SkillOpt-style optimizer** (`rigor/optimize.py`): treats `agent/instructions.md` as trainable
+  state. It replays cases through GLM with a candidate prompt, judges the output, has Claude propose
+  1-4 bounded anchor edits, and accepts only if the held-out validation score improves by
+  `optimizer.epsilon`. Every experiment logs to `evals/results/optimizer_log.jsonl`; candidates are
+  versioned in `evals/prompt_history/` (winner: `best.md`). `--apply` writes the winner to
+  `agent/instructions.md` — commit + deploy for it to take effect.
+- **Cost caps**: `UsageMeter` enforces the ceilings in `config/rigor.yaml` and aborts cleanly.
 
 ## Env vars
 

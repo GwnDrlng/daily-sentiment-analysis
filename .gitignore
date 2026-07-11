@@ -10,3 +10,8 @@ node_modules
 .nitro
 dist
 *.tsbuildinfo
+
+# rigor layer (Python)
+.venv
+__pycache__/
+.pytest_cache

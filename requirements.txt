@@ -1,0 +1,8 @@
+# Python deps for the rigor layer (rigor/ — evals, guardrails, optimizer).
+# The Eve agent itself is Node (package.json); these never deploy to Vercel.
+anthropic>=0.69
+pydantic>=2.7
+pyyaml>=6.0
+python-dotenv>=1.0
+httpx>=0.27
+pytest>=8.0

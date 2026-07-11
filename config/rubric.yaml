@@ -1,0 +1,39 @@
+# LLM-as-judge rubric, derived from CLAUDE.md FINAL QUALITY CHECK / STYLE /
+# SOURCE QUALITY. Each dimension is scored 1-5 by the judge; weighted_total and
+# pass/fail are computed in code (judge.py), not by the model.
+
+pass_threshold: 3.8   # weighted average (1-5) required to publish without revision
+
+dimensions:
+  - name: signal_over_noise
+    weight: 1.5
+    description: >
+      Surfaces genuinely high-signal developments; aggressively removes duplicate
+      narratives, hype, and low-information filler.
+  - name: evidence_backing
+    weight: 1.5
+    description: >
+      Every material claim is source-linked; unverified claims are explicitly
+      flagged; multi-source corroboration where it matters.
+  - name: momentum_classification
+    weight: 1.0
+    description: >
+      Momentum labels (Emerging/Rising/Peaking/Declining/Overhyped/Structural) are
+      justified by the evidence, not asserted.
+  - name: sentiment_justification
+    weight: 1.0
+    description: Sentiment reads explain WHY the sentiment exists.
+  - name: strategic_actionability
+    weight: 1.5
+    description: >
+      Strategic implications are concrete and useful to a PM/exec; opportunities,
+      threats, and 30-90 day watch items are specific.
+  - name: format_adherence
+    weight: 1.0
+    description: Follows the required OUTPUT STRUCTURE; executive-ready density.
+  - name: hype_suppression
+    weight: 1.0
+    description: Neutral, objective tone; no sensationalism or vague thought-leadership.
+  - name: non_duplication
+    weight: 0.5
+    description: No repeated signals across sections; each item earns its place.

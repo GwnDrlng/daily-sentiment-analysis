@@ -1,6 +1,8 @@
 import { defineTool } from "eve/tools";
 import { z } from "zod";
 
+import { drainSearches } from "../lib/research-log.js";
+
 // Fixed dark-theme shell (stylesheet lifted verbatim from briefings/briefing-2026-06-11.html,
 // plus the missing badge-level variants). The CSS never drifts — the model only emits the
 // <body> content using these component classes (see agent/instructions.md for the vocabulary).
@@ -154,11 +156,29 @@ export default defineTool({
     const htmlPath = `briefings/briefing-${day}.html`;
     await commitFile(htmlPath, html, `Add briefing ${day}`);
 
+    // Freeze this run's research as a replay case — the offline optimizer
+    // (python -m rigor.optimize) trains agent/instructions.md against these.
+    // Best-effort: a failed case commit must not lose the briefing archive.
+    const searches = drainSearches();
+    let caseSaved = false;
+    if (searches.length > 0) {
+      try {
+        await commitFile(
+          `evals/cases/case-${day}.json`,
+          JSON.stringify({ date: day, capturedAt: new Date().toISOString(), searches }, null, 2),
+          `Add replay case ${day}`,
+        );
+        caseSaved = true;
+      } catch (err) {
+        console.error(`replay case commit failed for ${day}:`, err);
+      }
+    }
+
     // GitHub Pages (main /root): https://<owner>.github.io/<repo>/<path>
     // ponytail: Pages redeploys after the commit, so the link may 404 for ~1 min.
     const [owner, name] = process.env.GITHUB_REPO!.split("/");
     const htmlUrl = `https://${owner}.github.io/${name}/${htmlPath}`;
 
-    return { htmlUrl, date: day };
+    return { htmlUrl, date: day, caseSaved };
   },
 });

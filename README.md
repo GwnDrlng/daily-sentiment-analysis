@@ -15,6 +15,8 @@ The topical focus sits where product management and AI are actually reshaping ho
 - `agent/instructions.md` holds the agent's operating instructions: objective, methodology, source weighting, and the HTML output format.
 - `agent/` is the Vercel Eve agent — model wiring, tools (web search, archive, Slack), the daily schedule, and the HTTP channel.
 - `briefings/` holds dated intelligence briefings, rendered as standalone HTML and published via GitHub Pages.
+- `rigor/` is the offline governance and training layer: guardrails, an LLM judge scoring each briefing against `config/rubric.yaml`, an append-only audit trail, and a prompt-optimization loop that treats `agent/instructions.md` as trainable state.
+- `evals/` holds the frozen replay cases the deployed agent commits with each briefing, plus score history and prompt version history.
 - `CLAUDE.md` is the developer guide for running and deploying the agent.
 - The root-level `.md` and `.html` files are an early briefing kept for longitudinal comparison.
 
@@ -110,8 +112,12 @@ curl -u $ROUTE_AUTH_BASIC_USER:$ROUTE_AUTH_BASIC_PASSWORD \
 
 Each briefing opens with a short executive summary covering the three-to-five highest-signal developments, what is accelerating, and what is weakening. From there it moves through emerging trends, contrarian debates, fatiguing narratives, a tools-to-watch list, and the strategic implications for the next thirty to ninety days. Every claim carries a source. Where confidence is low, the briefing says so instead of rounding up.
 
-## Naming the obvious gap
+## How it grades itself
 
-The automation is now in place — a deployed daily pipeline rather than a person running a prompt. What it still does not do is grade its own longitudinal accuracy: it does not yet measure how often a "rapidly emerging" call held up a month later. I am naming that because the whole premise rests on trusting the filter, and a filter that never grades itself is asking for faith it has not earned. That measurement layer is the next thing worth building.
+A filter that never grades itself is asking for faith it has not earned, so the repo carries a measurement layer alongside the agent. `python -m rigor.eval` runs every committed briefing through deterministic guardrails (every trend must cite a live source; blocked domains, noise keywords, injection, and PII are screened) and then an LLM judge that scores eight rubric dimensions — signal over noise, evidence backing, hype suppression, and the rest of `config/rubric.yaml`. The pass threshold is computed in code, not by the model, and every run lands in an append-only audit log with hashes of the exact prompt and config that produced it.
+
+The prompt itself is treated as trainable state. Each deployed run freezes its research as a replay case, and `python -m rigor.optimize` replays those cases through the production model with candidate edits to `agent/instructions.md`, accepting an edit only when the judge's score on held-out validation days improves. Rejected experiments are logged too; the point is a record of what was tried, not just what won.
+
+What it still does not measure is longitudinal accuracy — how often a "rapidly emerging" call held up a month later. The replay cases now accumulating are the raw material for exactly that check.
 
 The methodology is documented in `agent/instructions.md` if you want to see exactly how a topic gets classified, or adapt the weighting to a different domain.
